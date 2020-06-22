@@ -61,9 +61,13 @@ class FileStore implements Store
     {
         $this->ensureCacheDirectoryExists($path = $this->path($key));
 
-        $this->files->put(
+        $result = $this->files->put(
             $path, $this->expiration($minutes).serialize($value), true
         );
+
+        if ($result !== false && $result > 0) {
+            $this->files->chmod($path, 0775);
+        }
     }
 
     /**
